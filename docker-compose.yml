@@ -1,0 +1,22 @@
+services:
+  mysql:
+    image: 'mysql:latest'
+    container_name: mysql_db
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - '3306:3306'
+  artemis:
+    image: apache/activemq-artemis
+    container_name: artemis_route
+    environment:
+      ARTEMIS_USER: ${ARTEMIS_USER}
+      ARTEMIS_PASSWORD: ${ARTEMIS_PASSWORD}
+    ports:
+      - "8161:8161"
+      - "61616:61616"
+    volumes:
+      - ./artemis-data:/var/lib/artemis/data
