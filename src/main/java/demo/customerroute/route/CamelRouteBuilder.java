@@ -1,8 +1,8 @@
 package demo.customerroute.route;
 
-import demo.customerroute.customer.Customer;
-import demo.customerroute.customer.CustomerService;
+import demo.customerroute.customer.CustomerLookup;
 import demo.customerroute.exception.TierNotFoundException;
+import demo.customerroute.tier.TierLookup;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.JsonLibrary;
@@ -24,17 +24,16 @@ public class CamelRouteBuilder extends RouteBuilder {
         from("{{inbound.endpoint-uri}}")
                 .routeId("messages-inbox")
 
-                .convertBodyTo(String.class)
+                .unmarshal().json(JsonLibrary.Jackson, CustomerLookup.CustomerInfo.class)
 
-                .unmarshal().json(JsonLibrary.Jackson, Customer.class)
+                .bean(CustomerLookup.class, "processCustomer")
 
-                .bean(CustomerService.class, "processCustomer")
+                .setProperty("discount", method(TierLookup.class, "getDiscountPercentage(${body.tier})"))
 
-                .log(LoggingLevel.INFO, loggerId, "Thank you ${body.name} for being a ${body.tier}-customer. " +
-                        "Your discount is %")
+                .log(LoggingLevel.INFO, loggerId, "Thank you ${body.customer} for being a ${body.tier}-customer. " +
+                        "Your discount is ${exchangeProperty.discount}%")
 
                 .toD("jms:queue:CUSTOMER.${body.tier.toUpperCase()}.OUT");
-
 
     }
 }
