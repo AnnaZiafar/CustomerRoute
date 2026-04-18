@@ -5,8 +5,7 @@ import demo.customerroute.exception.TierNotFoundException;
 import demo.customerroute.tier.TierLookup;
 import demo.customerroute.tier.domain.Tier;
 import demo.customerroute.tier.domain.TierRepository;
-import demo.customerroute.tier.web.CreateTierDto;
-import demo.customerroute.tier.web.UpdateTierDto;
+import demo.customerroute.tier.web.TierDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,12 +47,8 @@ public class TierService implements TierLookup {
         return findByLevel(tierLevel).getDiscountPercentage();
     }
 
-    private String defaultBaseIfTierIsMissing(String tier){
-        return (tier == null || tier.isBlank()) ? DEFAULT_TIER : tier;
-    }
-
     @Transactional
-    public Tier addNewTier(CreateTierDto dto){
+    public Tier addNewTier(TierDto dto){
         String level = dto.level();
         if (repository.existsByLevel(level)) {
             throw new TierAlreadyExistException(level);
@@ -64,9 +59,9 @@ public class TierService implements TierLookup {
     }
 
     @Transactional
-    public Tier updateTier(UpdateTierDto tier){
+    public Tier updateTier(TierDto tier){
         Tier tierToUpdate = findByLevel(tier.level());
-        tierToUpdate.setDiscountPercentage(tier.discountPercentage());
+        tierToUpdate.updateDiscount(tier.discountPercentage());
         return repository.save(tierToUpdate);
     }
 
@@ -84,5 +79,8 @@ public class TierService implements TierLookup {
                 .orElseThrow(() -> new TierNotFoundException(level));
     }
 
+    private String defaultBaseIfTierIsMissing(String tier){
+        return (tier == null || tier.isBlank()) ? DEFAULT_TIER : tier;
+    }
 
 }

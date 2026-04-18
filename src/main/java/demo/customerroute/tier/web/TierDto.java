@@ -4,7 +4,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 
-public record UpdateTierDto(
+public record TierDto(
         @NotBlank(message = "Level cannot be empty")
         String level,
 
