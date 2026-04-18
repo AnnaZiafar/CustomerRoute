@@ -17,13 +17,18 @@ public class TierController {
     }
 
     @GetMapping
-    private List<Tier> showAllTiers(){
+    public List<Tier> showAllTiers(){
         return tierService.findAll();
     }
 
     @PostMapping
-    private void addOrUpdateTier(@RequestBody Tier tier){
-        tierService.processTier(tier);
+    public Tier addTier(@RequestBody CreateTierDto tier){
+        return tierService.addNewTier(tier);
+    }
+
+    @PutMapping
+    public Tier updateTierDiscount(@RequestBody UpdateTierDto tier){
+        return tierService.updateTier(tier);
     }
 
 }
