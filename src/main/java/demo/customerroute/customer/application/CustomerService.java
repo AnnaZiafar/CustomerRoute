@@ -1,5 +1,6 @@
 package demo.customerroute.customer.application;
 
+import demo.customerroute.customer.CreateCustomerDto;
 import demo.customerroute.customer.CustomerLookup;
 import demo.customerroute.customer.domain.Customer;
 import demo.customerroute.customer.domain.CustomerRepository;
@@ -7,30 +8,50 @@ import demo.customerroute.tier.TierLookup;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 public class CustomerService implements CustomerLookup {
 
-    private final CustomerRepository customerRepository;
+    private final CustomerRepository repository;
     private final TierLookup tierLookup;
 
-    public CustomerService(CustomerRepository customerRepository, TierLookup tierLookup){
-        this.customerRepository = customerRepository;
+    public CustomerService(CustomerRepository repository, TierLookup tierLookup){
+        this.repository = repository;
         this.tierLookup = tierLookup;
     }
 
     @Override
     @Transactional
     public CustomerInfo processCustomer(CustomerInfo customerInfo){
-        String validTier = tierLookup.validateTier(customerInfo.tier());
-        int tierId = tierLookup.getTierId(validTier);
-        String customer = customerInfo.customer();
+        Long tierId = getCustomerTierId(customerInfo.tier());
+        String name = customerInfo.customer();
 
-        if(customerRepository.existByName(customer))
-            customerRepository.updateCustomer(customer, tierId);
-        else
-            customerRepository.saveCustomer(customerInfo.customer(), tierId);
+        getCustomer(name).ifPresentOrElse(
+                existing -> {
+                    existing.setTierId(tierId);
+                    repository.save(existing);
+                },
+                () -> {
+                    CreateCustomerDto dto = new CreateCustomerDto(name.toLowerCase(), tierId);
+                    repository.save(new Customer(null, dto.name(), dto.tierId()));
+                }
+        );
 
-        return new CustomerInfo(customer, validTier);
+        return new CustomerInfo(name, getCustomerTierName(tierId));
+    }
+
+    private Long getCustomerTierId(String tier){
+        String validTier = tierLookup.validateTier(tier);
+        return tierLookup.getTierId(validTier);
+    }
+
+    private String getCustomerTierName(Long id){
+        return tierLookup.getTierLevel(id);
+    }
+
+    private Optional<Customer> getCustomer(String name){
+        return Optional.ofNullable(repository.findCustomerByName(name));
     }
 
 }

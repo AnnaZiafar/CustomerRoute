@@ -4,7 +4,9 @@ public interface TierLookup {
 
     String validateTier(String tier);
 
-    int getTierId(String tier);
+    Long getTierId(String tier);
+
+    String getTierLevel(Long id);
 
     int getDiscountPercentage(String tier);
 }
