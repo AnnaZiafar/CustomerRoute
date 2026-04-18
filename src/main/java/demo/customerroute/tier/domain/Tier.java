@@ -1,21 +1,39 @@
 package demo.customerroute.tier.domain;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+
+import java.time.Instant;
 
 @Getter
+@NoArgsConstructor
+@JsonPropertyOrder({"id", "level", "discountPercentage", "createdAt", "updatedAt"})
 public class Tier{
 
-    private final Integer id;
-    private final String tier;
-    private final int discountPercentage;
+    @Id
+    private Long id;
+    private String level;
+    private int discountPercentage;
+    private Instant createdAt;
+    private Instant updatedAt;
 
-    public Tier(Integer id, String tier, int discountPercentage){
+    public Tier(Long id, String level, int discountPercentage, Instant createdAt, Instant updatedAt){
         this.id = id;
-        this.tier = tier;
+        this.level = level;
         this.discountPercentage = discountPercentage;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
-    public static Tier createNew(String tier, int discountPercentage){
-        return new Tier(null, tier, discountPercentage);
+    public static Tier createNew(String level, int discountPercentage){
+        return new Tier(null, level, discountPercentage, Instant.now(), Instant.now());
     }
+
+    public void updateDiscount(int discountPercentage){
+        this.discountPercentage = discountPercentage;
+        this.updatedAt = Instant.now();
+    }
+
 }

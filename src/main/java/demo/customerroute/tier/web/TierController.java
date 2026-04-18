@@ -22,12 +22,12 @@ public class TierController {
     }
 
     @PostMapping
-    public Tier addTier(@RequestBody CreateTierDto tier){
+    public Tier addTier(@RequestBody TierDto tier){
         return tierService.addNewTier(tier);
     }
 
     @PutMapping
-    public Tier updateTierDiscount(@RequestBody UpdateTierDto tier){
+    public Tier updateTierDiscount(@RequestBody TierDto tier){
         return tierService.updateTier(tier);
     }
 

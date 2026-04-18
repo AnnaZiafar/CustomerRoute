@@ -1,6 +1,6 @@
 package demo.customerroute.customer.application;
 
-import demo.customerroute.customer.CreateCustomerDto;
+import demo.customerroute.customer.CustomerInfo;
 import demo.customerroute.customer.CustomerLookup;
 import demo.customerroute.customer.domain.Customer;
 import demo.customerroute.customer.domain.CustomerRepository;
@@ -29,12 +29,11 @@ public class CustomerService implements CustomerLookup {
 
         getCustomer(name).ifPresentOrElse(
                 existing -> {
-                    existing.setTierId(tierId);
+                    existing.updateCustomerTier(tierId);
                     repository.save(existing);
                 },
                 () -> {
-                    CreateCustomerDto dto = new CreateCustomerDto(name.toLowerCase(), tierId);
-                    repository.save(new Customer(null, dto.name(), dto.tierId()));
+                    repository.save(Customer.createNew(name, tierId));
                 }
         );
 
