@@ -19,7 +19,7 @@ public class Tier{
     private Instant createdAt;
     private Instant updatedAt;
 
-    public Tier(Long id, String level, int discountPercentage, Instant createdAt, Instant updatedAt){
+    private Tier(Long id, String level, int discountPercentage, Instant createdAt, Instant updatedAt){
         this.id = id;
         this.level = level;
         this.discountPercentage = discountPercentage;
@@ -28,7 +28,8 @@ public class Tier{
     }
 
     public static Tier createNew(String level, int discountPercentage){
-        return new Tier(null, level, discountPercentage, Instant.now(), Instant.now());
+        String processedLevel = level.toLowerCase();
+        return new Tier(null, processedLevel, discountPercentage, Instant.now(), Instant.now());
     }
 
     public void updateDiscount(int discountPercentage){

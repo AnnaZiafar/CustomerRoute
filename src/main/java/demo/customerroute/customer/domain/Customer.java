@@ -19,7 +19,7 @@ public class Customer{
     private Instant createdAt;
     private Instant updatedAt;
 
-    public Customer(Long id, String name, Long tierId, Instant createdAt, Instant updatedAt){
+    private Customer(Long id, String name, Long tierId, Instant createdAt, Instant updatedAt){
         this.id = id;
         this.name = name;
         this. tierId = tierId;
@@ -28,7 +28,8 @@ public class Customer{
     }
 
     public static Customer createNew(String name, Long tierId){
-        return new Customer(null, name, tierId, Instant.now(), Instant.now());
+        String processedName = name.toLowerCase();
+        return new Customer(null, processedName, tierId, Instant.now(), Instant.now());
     }
 
     public void updateCustomerTier(Long tierId){

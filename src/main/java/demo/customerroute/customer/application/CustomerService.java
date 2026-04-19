@@ -30,7 +30,7 @@ public class CustomerService implements CustomerLookup {
     @Override
     @Transactional
     public CustomerInfo processCustomer(CustomerInfo customerInfo){
-        String name = customerInfo.customer();
+        String name = customerInfo.customer().toLowerCase();
         Long tierId = getCustomerTierId(customerInfo.tier());
 
         Optional<Customer> customer = getCustomer(name);
@@ -38,6 +38,7 @@ public class CustomerService implements CustomerLookup {
         if(customer.isPresent()){
             Customer existingCustomer = customer.get();
             existingCustomer.updateCustomerTier(tierId);
+            repository.save(existingCustomer);
         } else {
             Customer newCustomer = Customer.createNew(name, tierId);
             repository.save(newCustomer);

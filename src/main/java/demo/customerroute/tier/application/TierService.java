@@ -49,7 +49,7 @@ public class TierService implements TierLookup {
 
     @Transactional
     public Tier addNewTier(TierDto dto){
-        String level = dto.level();
+        String level = dto.level().toLowerCase();
         if (repository.existsByLevel(level)) {
             throw new TierAlreadyExistException(level);
         }
