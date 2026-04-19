@@ -21,21 +21,27 @@ public class CustomerService implements CustomerLookup {
         this.tierLookup = tierLookup;
     }
 
+    /**
+     * If customer is present the tier is updated.
+     * Otherwise, the customer is persisted into db.
+     * @param customerInfo data transfer object containing customer details
+     * @return CustomerInfo regarding existing/new Customer
+     */
     @Override
     @Transactional
     public CustomerInfo processCustomer(CustomerInfo customerInfo){
-        Long tierId = getCustomerTierId(customerInfo.tier());
         String name = customerInfo.customer();
+        Long tierId = getCustomerTierId(customerInfo.tier());
 
-        getCustomer(name).ifPresentOrElse(
-                existing -> {
-                    existing.updateCustomerTier(tierId);
-                    repository.save(existing);
-                },
-                () -> {
-                    repository.save(Customer.createNew(name, tierId));
-                }
-        );
+        Optional<Customer> customer = getCustomer(name);
+
+        if(customer.isPresent()){
+            Customer existingCustomer = customer.get();
+            existingCustomer.updateCustomerTier(tierId);
+        } else {
+            Customer newCustomer = Customer.createNew(name, tierId);
+            repository.save(newCustomer);
+        }
 
         return new CustomerInfo(name, getCustomerTierName(tierId));
     }
