@@ -1,6 +1,5 @@
-package demo.customerroute.customer;
+package demo.customerroute;
 
-import demo.customerroute.Application;
 import org.junit.jupiter.api.Test;
 import org.springframework.modulith.core.ApplicationModules;
 import org.springframework.modulith.docs.Documenter;
