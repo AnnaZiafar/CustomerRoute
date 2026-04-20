@@ -80,15 +80,11 @@ class TierControllerTest {
 
     @Test
     void putMappingUpdatesTier() throws Exception {
-        int newDiscount = DISCOUNT + 1;
-        TierDto updateDto = new TierDto(TIER, newDiscount);
-        Tier updatedTier = Tier.createNew(TIER, newDiscount);
+        when(service.updateTier(tierDto)).thenReturn(savedTier);
 
-        when(service.updateTier(updateDto)).thenReturn(updatedTier);
-
-        performAction(put(URL), updateDto, status().isOk())
+        performAction(put(URL), tierDto, status().isOk())
                 .andExpect(jsonPath("$.level").value(TIER))
-                .andExpect(jsonPath("$.discountPercentage").value(newDiscount));
+                .andExpect(jsonPath("$.discountPercentage").value(DISCOUNT));
     }
 
     @Test
