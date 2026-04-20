@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/tiers")
+@RequestMapping("/tiers/api")
 public class TierController {
 
     private final TierService tierService;
