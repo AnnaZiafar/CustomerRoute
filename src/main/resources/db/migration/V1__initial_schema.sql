@@ -1,7 +1,7 @@
 create table tier (
     id bigint auto_increment primary key,
     level varchar(50) unique not null,
-    discount_percentage smallint not null,
+    discount_percentage smallint not null
 );
 
 insert into tier values

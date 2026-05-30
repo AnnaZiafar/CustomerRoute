@@ -1,6 +1,5 @@
-package demo.messageroute.tier;
+package demo.messageroute.tier.domain;
 
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import demo.messageroute.tier.events.DiscountUpdatedEvent;
 import demo.messageroute.tier.events.Event;
 import demo.messageroute.tier.events.TierCreatedEvent;
@@ -10,8 +9,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PACKAGE)
-@JsonPropertyOrder({"id", "level", "discountPercentage"})
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Tier {
 
     @Id
@@ -19,15 +17,14 @@ public class Tier {
     private String level;
     private int discountPercentage;
 
-    public static Tier create(Long id, String level, int discountPercentage){
+    public static Tier create(String level, int discountPercentage){
         Tier tier = new Tier();
-        tier.raiseEvent(new TierCreatedEvent(id, level, discountPercentage));
+        tier.raiseEvent(new TierCreatedEvent(level, discountPercentage));
         return tier;
     }
 
-    public void update(Long id, int discountPercentage){
-        this.discountPercentage = discountPercentage;
-        this.raiseEvent(new DiscountUpdatedEvent(id, discountPercentage));
+    public void update(String level, int discountPercentage){
+        this.raiseEvent(new DiscountUpdatedEvent(level, discountPercentage));
     }
 
     private void raiseEvent(Event event) {
