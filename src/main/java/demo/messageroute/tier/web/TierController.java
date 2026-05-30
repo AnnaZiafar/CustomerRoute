@@ -30,9 +30,10 @@ public class TierController {
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
-    @PatchMapping
-    public ResponseEntity<TierDto> updateTierDiscount(@RequestBody @Valid CreateTierDto dto) {
-        TierDto updated = service.updateTierDiscount(dto);
+    @PatchMapping("/{level}")
+    public ResponseEntity<TierDto> updateTierDiscount(@PathVariable String level,
+                                                      @RequestBody @Valid UpdateTierDto dto) {
+        TierDto updated = service.updateTierDiscount(level, dto.discountPercentage());
         return ResponseEntity.ok(updated);
     }
 

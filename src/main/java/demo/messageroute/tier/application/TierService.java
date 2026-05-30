@@ -41,18 +41,17 @@ public class TierService {
     }
 
     @Transactional
-    public TierDto updateTierDiscount(CreateTierDto dto) {
-        Tier tier = repository.findByLevel(dto.level())
-                .orElseThrow(() -> new TierNotFoundException(dto.level()));
+    public TierDto updateTierDiscount(String level, int discountPercentage) {
+        Tier tier = repository.findByLevel(level.toLowerCase())
+                .orElseThrow(() -> new TierNotFoundException(level));
 
-        tier.update(dto.level(), dto.discountPercentage());
+        tier.update(level, discountPercentage);
         return toDto(repository.save(tier));
     }
 
 
 
     //PRIVATE HELPERS
-
     private TierDto toDto(Tier tier){
         return new TierDto(tier.getId(),
                 tier.getLevel(),
