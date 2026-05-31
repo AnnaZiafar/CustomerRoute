@@ -7,10 +7,12 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.domain.AbstractAggregateRoot;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Tier {
+public class Tier extends AbstractAggregateRoot<Tier> {
 
     @Id
     private Long id;
@@ -23,17 +25,18 @@ public class Tier {
         return tier;
     }
 
-    public void update(String level, int discountPercentage){
-        this.raiseEvent(new DiscountUpdatedEvent(level, discountPercentage));
+    public void update(String level, int oldDiscount, int newDiscount){
+        this.raiseEvent(new DiscountUpdatedEvent(level, oldDiscount, newDiscount));
     }
 
     private void raiseEvent(Event event) {
+        registerEvent(event);
         switch (event) {
             case TierCreatedEvent e ->{
                 this.level = e.level();
                 this.discountPercentage = e.discountPercentage();
             }
-            case DiscountUpdatedEvent e -> this.discountPercentage = e.discountPercentage();
+            case DiscountUpdatedEvent e -> this.discountPercentage = e.newDiscount();
         }
     }
 

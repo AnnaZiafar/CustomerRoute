@@ -1,7 +1,6 @@
 package demo.messageroute.tier.infrastructure;
 
 import demo.messageroute.tier.domain.Tier;
-import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

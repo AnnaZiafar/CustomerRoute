@@ -41,11 +41,12 @@ public class TierService {
     }
 
     @Transactional
-    public TierDto updateTierDiscount(String level, int discountPercentage) {
+    public TierDto updateTierDiscount(String level, int newDiscount) {
         Tier tier = repository.findByLevel(level.toLowerCase())
                 .orElseThrow(() -> new TierNotFoundException(level));
 
-        tier.update(level, discountPercentage);
+        int oldDiscount = tier.getDiscountPercentage();
+        tier.update(level, oldDiscount, newDiscount);
         return toDto(repository.save(tier));
     }
 
