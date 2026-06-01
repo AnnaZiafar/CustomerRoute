@@ -39,6 +39,11 @@ public class CamelRouteBuilder extends RouteBuilder {
                 .maximumRedeliveries(3)
                 .redeliveryDelay(1000));
 
+        onException(CustomerNotFoundException.class)
+                .handled(true)
+                .log(LoggingLevel.ERROR, LOGGER_ID, "Missing customer. Forwarding to error queue.")
+                .to("jms:queue:TIER.DEAD.LETTER");
+
         onException(TierNotFoundException.class)
                 .handled(true)
                 .log(LoggingLevel.ERROR, LOGGER_ID, "Chosen tier does not exist. Forwarding to tier error queue.")
@@ -57,6 +62,11 @@ public class CamelRouteBuilder extends RouteBuilder {
                 .routeId("message-inbox")
 
                 .unmarshal().json(JsonLibrary.Jackson, IncomingMessageDto.class)
+
+                .choice()
+                    .when(simple("${body.customer} == null || ${body.customer.trim} == ''"))
+                    .throwException(new CustomerNotFoundException())
+                .end()
 
                 .setProperty("customer", simple("${body.customer}"))
 
