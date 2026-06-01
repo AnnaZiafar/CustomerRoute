@@ -1,14 +1,13 @@
 package demo.messageroute.tier.domain;
 
 import demo.messageroute.tier.events.DiscountUpdatedEvent;
-import demo.messageroute.tier.events.Event;
+import demo.messageroute.tier.events.TierEvent;
 import demo.messageroute.tier.events.TierCreatedEvent;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.domain.AbstractAggregateRoot;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -29,7 +28,7 @@ public class Tier extends AbstractAggregateRoot<Tier> {
         this.raiseEvent(new DiscountUpdatedEvent(level, oldDiscount, newDiscount));
     }
 
-    private void raiseEvent(Event event) {
+    private void raiseEvent(TierEvent event) {
         registerEvent(event);
         switch (event) {
             case TierCreatedEvent e ->{
